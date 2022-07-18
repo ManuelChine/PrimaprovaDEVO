@@ -1,0 +1,41 @@
+version: '3.3'
+services:
+  database:
+    image: postgres
+    container_name: "dev-postgres"
+    hostname: "dev-postgres"
+    env_file:
+      - ./env/database.env
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    restart: always
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: "dev-pgadmin"
+    hostname: "dev-pgadmin"
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+    ports:
+      - 5050:80
+    env_file:
+      - ./env/pgadmin.env
+    depends_on:
+      - database
+    restart: always  
+    
+  backend:
+    image: backend:00
+    build: ./backend
+    container_name: "dev-backend"
+    hostname: "dev-backend"
+    ports:
+      - 8080:80
+    depends_on:
+      - database
+    restart: always  
+
+volumes:
+  postgres:
+  pgadmin:
+ 
